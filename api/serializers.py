@@ -1,5 +1,10 @@
 from rest_framework import serializers
-from .models import Product, User, Order, OrderItem, Category, Farmer
+from .models import Product, User, Order, OrderItem, Category, Farmer, Coupon
+
+class CouponSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Coupon
+        fields = '__all__'
 
 class FarmerSerializer(serializers.ModelSerializer):
     class Meta:

@@ -9,4 +9,5 @@ urlpatterns = [
     path('orders/', views.OrderList.as_view()),
     path('product/info/', views.ProductInfoAPIView.as_view()),
     path('farmers/', views.FarmerListCreateApiView.as_view()),
+    path('coupons/', views.CouponListCreateAPIView.as_view())
 ]

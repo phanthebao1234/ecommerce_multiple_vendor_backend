@@ -9,18 +9,22 @@ class Address(models.Model):
     state = models.CharField(max_length=200)
     zip = models.CharField(max_length=200)
     
+    def __str__(self):
+        return f'{self.street}, {self.city}, {self.state}, {self.zip}'
+    
 class User(AbstractUser):
     pass
 
 class Coupon(models.Model):
     title = models.CharField(max_length=200)
     couponCode = models.CharField(max_length=255)
+    startDate = models.DateTimeField()
     expiryDate = models.DateTimeField()
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return self.title
+        return f'{self.title} - {self.couponCode}'
     
 class Post(models.Model):
     slug = models.CharField(max_length=200)
@@ -31,16 +35,17 @@ class Post(models.Model):
     updatedAt = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return self.title
+        return f'{self.title} - {self.author}'
 
 class Comment(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.TextField()
     post = models.ForeignKey(Post, on_delete=models.CASCADE, null=True, blank=True)
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return self.post.title
+        return f'{self.author.email} - {self.comment} - Post: {self.post.title}'
     
 class Category(models.Model):
     title = models.CharField(max_length=255)
@@ -104,8 +109,20 @@ class ProductImage(models.Model):
 class Market(models.Model):
     name = models.CharField(max_length=200)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
+    descriptions = models.TextField()
+    slug = models.SlugField(max_length=200, unique=True, null=True, blank=True)
+    logoImage = models.CharField(max_length=100)
+    isActive = models.BooleanField(default=True)
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)  
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+    
+    def __stf__(self):
+        return f'{self.name} - {self.isActive}'
     
 class Order(models.Model):
     class StatusChoice(models.TextChoices):
